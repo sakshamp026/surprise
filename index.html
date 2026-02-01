@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Be My Valentine 💖</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
+      overflow: hidden;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .card {
+      position: relative;
+      z-index: 2;
+      background: white;
+      padding: 40px 30px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      animation: popIn 1s ease;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    h1 { color: #ff4d6d; }
+    p { color: #555; font-size: 18px; margin-bottom: 30px; }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      position: relative;
+    }
+
+    button {
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    #yesBtn { background: #ff4d6d; color: white; }
+    #yesBtn:hover { transform: scale(1.1); }
+
+    #noBtn {
+      background: #eee;
+      color: #333;
+      position: absolute;
+      right: 0;
+    }
+
+    .message {
+      display: none;
+      font-size: 22px;
+      color: #ff4d6d;
+      margin-top: 20px;
+      animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .heart {
+      position: fixed;
+      bottom: -20px;
+      font-size: 20px;
+      animation: floatUp 6s linear forwards;
+      opacity: 0.9;
+      z-index: 1;
+    }
+
+    @keyframes floatUp {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-110vh); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div class="card">
+  <h1>Hiii Dharviii💕</h1>
+  <p>Will you be my Valentine?👉👈</p>
+
+  <div class="buttons">
+    <button id="yesBtn">Yes 💖</button>
+    <button id="noBtn">No 🙈</button>
+  </div>
+
+  <div class="message" id="message">Yayyy! 💘 I knew you'd say yes 🥰</div>
+</div>
+
+<script>
+  const noBtn = document.getElementById('noBtn');
+  const yesBtn = document.getElementById('yesBtn');
+  const message = document.getElementById('message');
+
+  noBtn.addEventListener('mouseenter', () => {
+    const x = Math.random() * 200 - 100;
+    const y = Math.random() * 100 - 50;
+    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+  });
+
+  yesBtn.addEventListener('click', () => {
+    message.style.display = 'block';
+    spawnHearts();
+    launchFireworks();
+  });
+
+  function spawnHearts() {
+    for (let i = 0; i < 120; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.innerText = '❤️';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.fontSize = 16 + Math.random() * 24 + 'px';
+      heart.style.animationDuration = 3 + Math.random() * 3 + 's';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 6000);
+    }
+  }
+
+  // FIREWORKS (CANVAS)
+  const canvas = document.getElementById('fireworks');
+  const ctx = canvas.getContext('2d');
+  resize();
+  window.addEventListener('resize', resize);
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function launchFireworks() {
+    let count = 0;
+    const interval = setInterval(() => {
+      explode(Math.random() * canvas.width, Math.random() * canvas.height * 0.6);
+      count++;
+      if (count > 8) clearInterval(interval);
+    }, 300);
+  }
+
+  function explode(x, y) {
+    for (let i = 0; i < 30; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 4 + 2;
+      const vx = Math.cos(angle) * speed;
+      const vy = Math.sin(angle) * speed;
+      const hue = Math.random() * 360;
+      animateParticle({ x, y, vx, vy, alpha: 1, hue });
+    }
+  }
+
+  function animateParticle(p) {
+    function frame() {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.alpha -= 0.02;
+      ctx.fillStyle = `hsla(${p.hue},100%,60%,${p.alpha})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+      if (p.alpha > 0) requestAnimationFrame(frame);
+    }
+    frame();
+  }
+</script>
+
+</body>
+</html>
